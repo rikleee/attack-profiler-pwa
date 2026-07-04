@@ -1,0 +1,29 @@
+{
+  "name": "ATT&CK Profiler PWA",
+  "short_name": "ATT&CK Profiler",
+  "description": "PWA difensiva per triage di incidenti cyber con MITRE ATT&CK, IOC, TTP, detection, mitigazioni e supporto SOC/CISO/investigatore.",
+  "lang": "it-IT",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#020617",
+  "theme_color": "#020617",
+  "categories": ["security", "productivity", "utilities"],
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Nuova analisi",
+      "short_name": "Analizza",
+      "description": "Apri ATT&CK Profiler per una nuova analisi difensiva.",
+      "url": "./index.html"
+    }
+  ]
+}
