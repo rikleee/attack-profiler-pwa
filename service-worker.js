@@ -1,4 +1,4 @@
-const CACHE_NAME='attack-profiler-pwa-v26-integrated-analytical-training';
+const CACHE_NAME='attack-profiler-pwa-v27-dashboard-navigation';
 const APP_SHELL=['./','./index.html','./intelligence.html','./training.html','./training-fondamenti.html','./training-fonti.html','./training-framework.html','./training-soc-ir.html','./training-governance.html','./training-casi.html','./training-advanced.html','./training-labs.html','./playbooks.html','./analyze.html','./security.html','./glossary.html','./styles.css','./cti.css','./app.js','./cti.js','./site.js','./global-feed.js','./pages.js','./enrich.js','./operational.js','./case-report.js','./assistant.js','./manifest.json','./manifest.webmanifest','./icon.svg','./icons/icon-192.png','./icons/icon-512.png'];
 self.addEventListener('install',event=>{event.waitUntil(caches.open(CACHE_NAME).then(cache=>cache.addAll(APP_SHELL)).then(()=>self.skipWaiting()))});
 self.addEventListener('activate',event=>{event.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k!==CACHE_NAME).map(k=>caches.delete(k)))).then(()=>self.clients.claim()))});
