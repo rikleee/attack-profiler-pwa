@@ -1,116 +1,102 @@
 # ATT&CK Profiler PWA
 
-![Status](https://img.shields.io/badge/status-PWA%20defensive%20tool-blue) ![MITRE ATT%26CK](https://img.shields.io/badge/MITRE-ATT%26CK-red) ![PWA](https://img.shields.io/badge/PWA-installable-brightgreen)
+**ATT&CK Profiler PWA** è una Progressive Web App pensata per supportare **SOC, CISO e investigatori digitali** nel triage difensivo di incidenti cyber.
 
-**ATT&CK Profiler PWA** è una Progressive Web App difensiva per trasformare la descrizione di un incidente cyber in una prima lettura operativa basata su MITRE ATT&CK.
+Prendendo come input la descrizione di un evento, l’app restituisce una scheda tecnica strutturata secondo il modello **MITRE ATT&CK**, mettendo in evidenza tecniche, tattiche, IOC, indicatori di comportamento (IOA), profili TTP compatibili, suggerimenti di detection e mitigazione. È uno strumento pensato per la fase di analisi e risposta, non per l’attacco: non contiene funzioni offensive né procedure di compromissione.
 
-L'obiettivo è aiutare analisti SOC, CISO, investigatori digitali e team di incident response a strutturare rapidamente le informazioni disponibili, evidenziando tecniche, tattiche, IOC, profili TTP compatibili, detection, mitigazioni e azioni di contenimento.
+## Caratteristiche principali
 
----
+### PWA moderna e installabile
 
-## Novità della versione PWA
+- Manifest e service worker per la modalità offline: `index.html`, fogli di stile, script e icone vengono messi in cache così che l’app continui a funzionare anche senza connettività.
+- Se il backend non risponde l’interfaccia passa automaticamente al motore euristico locale, evitando interruzioni.
+- Installabile su Android e browser desktop: basta aprire l’app da un browser compatibile e selezionare “Aggiungi alla schermata Home”.
+- Tema scuro/chiaro con design sobrio in stile cyber, tipografia chiara e componenti responsive.
 
-- Interfaccia più moderna, mobile-first e installabile.
-- Manifest PWA dedicato (`manifest.webmanifest`).
-- Service worker per cache dell'app shell e uso offline del frontend.
-- Icona applicativa SVG (`icon.svg`).
-- Stato online/offline visibile nell'interfaccia.
-- Pulsante di installazione quando supportato dal browser.
-- Preset difensivi per avviare rapidamente scenari di analisi.
-- Timeline operativa 24/48/72 ore.
-- Export report in `.txt` e `.json`.
-- Salvataggio locale della bozza sul dispositivo.
+### Dashboard e visualizzazione dei risultati
 
----
+- Dashboard iniziale con quattro card: livello di rischio stimato, numero di tecniche MITRE rilevate, numero di IOC estratti e profilo TTP principale.
+- Timeline visuale della kill chain: per ogni tattica MITRE rilevata viene mostrata la sequenza temporale 0–24h, 24–48h, 48–72h.
+- Card tecniche compatte: ogni tecnica riporta ID, nome, tattica, confidence score, evidenza, detection, mitigazioni e link alla pagina ufficiale MITRE.
+- Sezioni chiare per IOC, profili TTP, azioni consigliate, fonti e report completo.
+- Export report in JSON e download/copia della versione `.txt` direttamente dal browser.
 
-## Cosa fa
+### Modalità operative e didattica
 
-- Analizza una descrizione testuale di un incidente cyber.
-- Estrae IOC come IP, domini, URL, email, hash e nomi file.
-- Mappa possibili tecniche MITRE ATT&CK.
-- Suggerisce detection, mitigazioni e attività operative.
-- Stima profili TTP compatibili, senza attribuzione certa.
-- Genera un report testuale copiabile o scaricabile.
-- Funziona con backend LLM quando disponibile e con fallback locale euristico se il backend non risponde.
+- Supporto a tre prospettive: **SOC**, **CISO** e **Investigatore**.
+- Preset di scenario difensivi: phishing con macro e PowerShell, ransomware, esfiltrazione cloud, compromissione account cloud, attacco OT/ICS.
+- Modalità didattica opzionale con pulsanti “?” accanto ai concetti principali.
+- Pop-up in italiano su MITRE ATT&CK, tattica vs tecnica, IOC, IOA, TTP, confidence score, kill chain, detection, mitigazione, preservazione evidenze e rischio.
+- Glossario rapido con ricerca locale per IOC, IOA, TTP, MITRE ATT&CK, Kill Chain, C2, phishing, ransomware, persistence, lateral movement, exfiltration, EDR, SIEM, Sigma, YARA, CVE, CVSS, CWE e CAPEC.
 
----
+### Persistenza e storico locale
+
+- Le ultime cinque analisi vengono salvate nel `localStorage` del browser.
+- La sezione “Analisi recenti” permette di ricaricare un report precedente o cancellare la cronologia locale.
+- Non vengono memorizzate chiavi API, token o informazioni di autenticazione.
 
 ## Backend e fallback
 
-Il frontend mantiene il backend attuale:
+Il backend attuale rimane invariato:
 
 ```text
 https://attack-profiler-pwa.onrender.com/api/analyze
 ```
 
-Se il backend non risponde, l'app passa automaticamente a un'analisi locale euristica. Il fallback non sostituisce una piattaforma CTI o una validazione forense, ma consente di mantenere continuità operativa per triage iniziale, estrazione IOC e prime azioni difensive.
+Quando il backend è configurato con una chiave LLM valida restituisce analisi ragionate e contestuali. In assenza di chiave può utilizzare un motore a parole chiave. Se il backend non risponde entro il timeout, il frontend passa al **motore euristico locale** basato su regole difensive.
 
----
+## Fonti aperte e privacy
 
-## Modalità di analisi
+Questa versione include collegamenti diretti alle pagine ufficiali **MITRE ATT&CK** per le tecniche valide. La roadmap prevede arricchimento manuale di IOC e CVE con:
 
-### SOC / Incident Response
-Vista tecnica orientata a detection, triage, contenimento e hunting.
+- CISA Known Exploited Vulnerabilities;
+- NVD/NIST per CVE, CVSS e CWE;
+- FIRST EPSS;
+- CISA advisories, CERT-EU, ENISA, CSIRT Italia/ACN;
+- feed open source compatibili come CIRCL MISP e Abuse.ch.
 
-### CISO / Decisioni
-Vista sintetica per priorità, rischio, escalation, impatto e governance.
+Il frontend **non invia automaticamente IOC a servizi esterni**. L’enrichment è manuale, richiede consenso esplicito dell’utente e deve essere implementato lato backend con cache, rate limiting, timestamp, fonte e livello di affidabilità. Le chiavi API non devono mai essere inserite nel frontend o nel repository.
 
-### Investigatore / Evidenze
-Vista orientata a IOC, catena degli eventi, preservazione delle evidenze e ricostruzione della timeline.
+## Utilizzo
 
----
+1. Apri l’app via GitHub Pages o servendo localmente i file statici.
+2. Scrivi o incolla la descrizione di un incidente nell’area di input.
+3. Seleziona modalità SOC, CISO o Investigatore, settore e criticità.
+4. Avvia l’analisi.
+5. Esplora dashboard, IOC, kill chain, tecniche MITRE, profili TTP e azioni.
+6. Esporta il report in JSON o TXT.
+7. Attiva la modalità didattica per visualizzare spiegazioni contestuali.
 
-## Flusso operativo
+## Struttura progetto
 
-1. L'utente descrive l'evento osservato.
-2. L'app invia la richiesta al backend LLM.
-3. Se il backend non è raggiungibile, entra in funzione l'analisi locale.
-4. Il risultato viene organizzato in sezioni navigabili.
-5. Il report può essere copiato, scaricato in testo o esportato in JSON.
+```text
+index.html
+styles.css
+app.js
+manifest.json
+manifest.webmanifest
+service-worker.js
+icon.svg
+README.md
+PROJECT_PRESENTATION.md
+docs/
+```
 
----
+## Sicurezza e limiti
 
-## Sezioni del risultato
+- Il progetto è esclusivamente difensivo.
+- Non genera exploit, payload o procedure di compromissione.
+- I profili TTP sono compatibilità comportamentali, non attribuzioni certe.
+- Ogni valutazione deve essere validata con log, timeline, evidenze forensi, fonti CTI aggiornate e analisi umana.
+- Non inserire chiavi API o informazioni sensibili nel frontend.
 
-- **Sintesi operativa**: quadro generale, rischio, tecniche, IOC e profilo principale.
-- **IOC estratti**: indicatori tecnici separati per categoria.
-- **Tecniche MITRE**: tecnica, tattica, confidenza, evidenza, detection e mitigazione.
-- **Profili TTP compatibili**: cluster probabilistici basati sulle tecniche osservate.
-- **Azioni consigliate**: contenimento, preservazione evidenze, escalation e detection engineering.
-- **Timeline 24/48/72 ore**: priorità operative per contenimento, hunting, validazione, remediation e governance.
-- **Report testuale**: output pronto per copia o download.
+## Roadmap sintetica
 
----
+- **Fase 1**: PWA installabile, interfaccia moderna, service worker, dashboard, timeline, storico locale, modalità didattica, glossario e link MITRE.
+- **Fase 2**: arricchimento manuale di IOC e CVE con NVD, CISA KEV, EPSS e fonti aperte.
+- **Fase 3**: backend CTI con cache, scoring fonti, report strutturato e query Sigma/YARA.
+- **Fase 4**: integrazione opzionale MISP/OpenCTI per organizzazioni autorizzate.
 
-## Avvertenza importante
+## Disclaimer difensivo
 
-Questo progetto ha finalità **difensive, formative e di supporto al triage**.  
-L'attribuzione a gruppi o cluster è solo probabilistica e deve essere sempre validata con log, evidenze forensi, fonti CTI aggiornate e analisi umana.
-
----
-
-## Tecnologie
-
-- Frontend: HTML, CSS, JavaScript vanilla.
-- PWA: Web App Manifest + Service Worker.
-- Backend: API LLM esterna su Render.
-- Deploy: GitHub Pages / Render.
-- Modello concettuale: MITRE ATT&CK, IOC, TTP, detection engineering e incident response.
-
----
-
-## Roadmap miglioramenti
-
-- Knowledge base MITRE ATT&CK più completa.
-- Esportazione PDF/STIX.
-- Query Sigma/YARA/SIEM generate automaticamente.
-- Integrazione con MISP o piattaforme CTI.
-- Timeline visuale dell'incidente.
-- Dashboard CISO con impatto, priorità e azioni entro 24/48/72 ore.
-- Storico locale cifrato delle analisi.
-
----
-
-## Stato progetto
-
-PWA difensiva funzionante e installabile. Ideale come base per un'applicazione più ampia di cyber threat intelligence operativa e supporto decisionale durante la gestione di incidenti cyber.
+ATT&CK Profiler PWA è uno strumento di supporto analitico, formazione e triage difensivo. Non sostituisce il giudizio dell’analista, le procedure di incident response, l’analisi forense o la threat intelligence aggiornata.
