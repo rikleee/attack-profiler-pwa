@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#020617">
-  <meta name="description" content="PWA difensiva per analisi incidenti cyber con MITRE ATT&CK, IOC, IOA, TTP, detection, mitigazioni e triage CTI.">
+  <meta name="description" content="PWA difensiva per Cyber Threat Intelligence, analisi incidenti, MITRE ATT&CK, IOC, log SIEM, detection, mitigazioni e triage CTI.">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-title" content="ATT&CK Profiler">
   <link rel="manifest" href="manifest.json">
@@ -15,21 +15,35 @@
 </head>
 <body>
   <header class="app-header">
-    <div class="brand"><div class="logo">◆</div><div><strong>ATT&CK Profiler</strong><span>PWA difensiva SOC · CISO · Investigatore · CTI</span></div></div>
+    <div class="brand"><div class="logo">◆</div><div><strong>ATT&CK Profiler</strong><span>Cyber Threat Intelligence · SOC · CISO · Investigatore</span></div></div>
     <div class="header-actions"><button id="themeBtn" class="btn ghost" type="button">Tema</button><button id="installBtn" class="btn ghost hidden" type="button">Installa</button></div>
   </header>
   <main class="wrap">
-    <section class="hero card glow">
-      <div><span class="kicker">Difensivo · MITRE ATT&CK · IOC · IOA · TTP · CTI</span><h1>Dal racconto dell’incidente al <span>triage operativo CTI</span>.</h1><p>Analizza eventi cyber, struttura evidenze, tecniche, detection, mitigazioni e decisioni sugli IOC senza funzioni offensive né invio automatico a fonti esterne.</p></div>
-      <div class="hero-panel"><h2>Modalità didattica</h2><p>Attiva le spiegazioni contestuali per capire perché ogni dato è utile a SOC, CISO e investigatore.</p><label class="switch"><input id="eduMode" type="checkbox"><span></span> Attiva spiegazioni</label></div>
+    <section class="hero card glow cti-hero">
+      <div><span class="kicker">Cyber Threat Intelligence · MITRE ATT&CK · Triage difensivo</span><h1>Trasforma log, alert e racconti di incidente in <span>decisioni CTI</span>.</h1><p>Una PWA difensiva per leggere eventi cyber, estrarre IOC/IOA, mappare TTP, stimare impatto e supportare SOC, CISO e investigatore senza funzioni offensive né invii automatici a fonti esterne.</p><div class="actions"><a class="btn primary" href="#analisi">Avvia analisi</a><a class="btn ghost" href="#cti-guide">Cos’è la CTI</a></div></div>
+      <div class="hero-panel threat-card"><h2>CTI in pratica</h2><p><b>Osserva</b> evidenze e log, <b>contestualizza</b> IOC e TTP, <b>decidi</b> cosa monitorare, validare o bloccare.</p><div class="mini-flow"><span>Log</span><span>IOC</span><span>MITRE</span><span>Triage</span><span>Azioni</span></div><label class="switch"><input id="eduMode" type="checkbox"><span></span> Attiva spiegazioni</label></div>
     </section>
+
+    <section id="cti-guide" class="content-grid">
+      <article class="card concept-card"><h2>Cos’è la Cyber Threat Intelligence?</h2><p>La CTI è il processo con cui dati grezzi — log, segnalazioni, IOC, alert, report, evidenze forensi — vengono trasformati in informazioni utili per decidere. Non serve solo a “sapere chi attacca”, ma soprattutto a capire <b>cosa cercare</b>, <b>cosa proteggere</b>, <b>quanto fidarsi dell’indicatore</b> e <b>quale azione è proporzionata</b>.</p></article>
+      <article class="card concept-card"><h2>Dati, informazioni, intelligence</h2><p><b>Dato:</b> un IP, un hash, una riga di log. <b>Informazione:</b> quell’IP compare in connessioni anomale da un server critico. <b>Intelligence:</b> l’indicatore è affidabile, collegato a una tecnica MITRE e richiede monitoraggio, validazione o blocco.</p></article>
+      <article class="card concept-card"><h2>Threat Hunting</h2><p>Il threat hunting parte da ipotesi difensive: “ci sono account validi abusati?”, “esiste esfiltrazione cloud?”, “ci sono processi anomali?”. L’app aiuta a convertire le TTP candidate in piste di verifica su SIEM, EDR, DNS, proxy, email gateway e log cloud.</p></article>
+    </section>
+
     <section class="dashboard"><article class="metric"><small>Rischio</small><b id="mRisk">-</b></article><article class="metric"><small>Tecniche</small><b id="mTech">0</b></article><article class="metric"><small>IOC</small><b id="mIoc">0</b></article><article class="metric"><small>Profilo TTP</small><b id="mTtp">-</b></article></section>
-    <section class="card input-card">
+
+    <section id="analisi" class="card input-card">
+      <h2>Console di analisi difensiva</h2>
+      <p class="muted">Incolla una descrizione, una denuncia, un estratto SIEM o carica file testuali di log. I file vengono letti localmente nel browser e inseriti nell’area di analisi: non vengono inviati automaticamente a terzi.</p>
       <div class="form-grid"><label>Vista<select id="mode"><option value="soc">SOC / Incident Response</option><option value="ciso">CISO / Decisioni</option><option value="investigator">Investigatore / Evidenze</option></select></label><label>Criticità<select id="severity"><option value="auto">Automatica</option><option value="low">Bassa</option><option value="medium">Media</option><option value="high">Alta</option></select></label><label>Settore<select id="sector"><option value="generico">Generico</option><option value="pa">PA / Gov</option><option value="finance">Banche / Finanza</option><option value="health">Sanità</option><option value="energy">Energia / OT</option><option value="sme">PMI</option></select></label></div>
+      <div class="file-zone"><label for="logFiles"><b>Carica log / denuncia / export SIEM</b><span>TXT, CSV, JSON, LOG, EVTX esportato in testo. Lettura locale, max consigliato 2 MB per file.</span></label><input id="logFiles" type="file" multiple accept=".txt,.log,.csv,.json,.xml,.md,.evtx"><div id="filePreview" class="file-preview muted">Nessun file caricato.</div></div>
       <label class="input-label">Descrizione evento <button class="info" data-help="ioc" type="button">?</button></label><textarea id="input" placeholder="Descrivi evidenze, log disponibili, sistemi coinvolti, indicatori, impatto e attività già osservate. Inserisci IOC noti solo se autorizzato a trattarli."></textarea>
       <div class="preset-row"><button class="chip" data-preset="phishing" type="button">Phishing macro + PowerShell</button><button class="chip" data-preset="ransomware" type="button">Ransomware</button><button class="chip" data-preset="exfil" type="button">Esfiltrazione cloud</button><button class="chip" data-preset="account" type="button">Account cloud</button><button class="chip" data-preset="ot" type="button">OT/ICS</button></div>
       <div class="actions"><button id="analyzeBtn" class="btn primary" type="button">Analizza</button><button id="clearBtn" class="btn ghost" type="button">Pulisci</button></div><p id="status" class="status"></p>
     </section>
+
+    <section class="card security-card"><h2>Verifica sicurezza informatica</h2><p class="muted">Checklist rapida per orientare la postura difensiva durante l’incidente. Serve a ragionare su controlli, non a testare vulnerabilità in modo offensivo.</p><div id="securityChecklist" class="check-grid"></div><div class="score"><div id="securityScore" class="bar" style="width:0%"></div></div><p id="securityText" class="status">Seleziona i controlli presenti per stimare la maturità difensiva.</p></section>
+
     <section id="results" class="hidden"><nav id="tabs" class="tabs"></nav><section class="panel card" data-panel="summary"><h2>Sintesi <button class="info" data-help="risk" type="button">?</button></h2><div id="summary"></div></section><section class="panel card" data-panel="cti"><h2>Triage CTI <button class="info" data-help="cti" type="button">?</button></h2><div id="cti"></div></section><section class="panel card" data-panel="iocs"><h2>IOC e CVE <button class="info" data-help="ioc" type="button">?</button></h2><label class="switch small-switch"><input id="allowEnrich" type="checkbox"><span></span> Consenti enrichment manuale da fonti aperte</label><p class="muted">L’app non invia automaticamente IOC a servizi esterni. L’azione resta manuale e soggetta ad autorizzazione, privacy e OPSEC.</p><div id="iocs"></div></section><section class="panel card" data-panel="timeline"><h2>Kill chain visuale <button class="info" data-help="killchain" type="button">?</button></h2><div id="killchain"></div></section><section class="panel card" data-panel="tech"><h2>Tecniche MITRE <button class="info" data-help="mitre" type="button">?</button></h2><div id="tech" class="tech-grid"></div></section><section class="panel card" data-panel="groups"><h2>Profili TTP <button class="info" data-help="ttp" type="button">?</button></h2><div id="groups"></div></section><section class="panel card" data-panel="actions"><h2>Azioni e mitigazioni <button class="info" data-help="mitigation" type="button">?</button></h2><div id="actionsBox"></div></section><section class="panel card" data-panel="sources"><h2>Fonti e limiti</h2><div id="sources"></div></section><section class="panel card" data-panel="report"><h2>Report</h2><div class="actions"><button id="copyBtn" class="btn primary" type="button">Copia report</button><button id="txtBtn" class="btn ghost" type="button">Scarica .txt</button><button id="jsonBtn" class="btn ghost" type="button">Esporta JSON</button></div><pre id="report"></pre></section></section>
     <section class="card"><h2>Analisi recenti</h2><div class="actions"><button id="clearHistoryBtn" class="btn ghost" type="button">Cancella cronologia locale</button></div><div id="history" class="history"></div></section>
     <section class="card"><h2>Glossario rapido</h2><input id="glossarySearch" class="search" placeholder="Cerca: IOC, IOA, CTI, confidence, SIEM..."><div id="glossary" class="glossary"></div></section>
@@ -37,5 +51,6 @@
   <dialog id="helpDialog"><button id="closeHelp" class="btn ghost close" type="button">Chiudi</button><h3 id="helpTitle"></h3><p id="helpText"></p></dialog>
   <script src="app.js" defer></script>
   <script src="cti.js" defer></script>
+  <script src="site.js" defer></script>
 </body>
 </html>
