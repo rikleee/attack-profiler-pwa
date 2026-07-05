@@ -2,11 +2,13 @@
 
 ## Introduzione
 
-Nella gestione di un incidente informatico è essenziale ricostruire in tempi rapidi **cosa è accaduto**, **come l’attaccante si è mosso** e **quali azioni immediatamente intraprendere**. Spesso le informazioni arrivano come descrizioni testuali o alert eterogenei, e l’analista deve trasformarle in una sequenza coerente di TTP per orientarsi fra detection, contenimento e mitigazioni.
+Nella gestione di un incidente informatico è essenziale ricostruire rapidamente **cosa è accaduto**, **come l’attore si è mosso** e **quali decisioni difensive assumere**. Le informazioni arrivano spesso come descrizioni testuali, alert eterogenei o IOC isolati: l’analista deve trasformarle in una sequenza coerente di TTP, detection, mitigazioni e priorità operative.
 
 ## Obiettivo della soluzione
 
-**ATT&CK Profiler PWA** è uno strumento **difensivo** che aiuta ad analizzare descrizioni di incidenti e a mappare rapidamente le evidenze sulle tecniche **MITRE ATT&CK**, evidenziando IOC, IOA, TTP compatibili, detection, mitigazioni e priorità operative. La stessa analisi può essere letta secondo tre prospettive: SOC, CISO e Investigatore.
+**ATT&CK Profiler PWA** è uno strumento **difensivo** che aiuta ad analizzare descrizioni di incidenti e a mappare rapidamente le evidenze sulle tecniche **MITRE ATT&CK**, evidenziando IOC, IOA, TTP compatibili, detection, mitigazioni, priorità e decisioni operative. La stessa analisi può essere letta secondo tre prospettive: SOC, CISO e Investigatore.
+
+La nuova versione implementa realmente nella UI una sezione **Triage CTI**, ispirata ai concetti di threat hunting e threat intelligence platform: ogni IOC diventa una scheda decisionale con fonte, affidabilità, confidence, impatto, stato operativo, motivazione e avviso privacy/OPSEC.
 
 ## Architettura PWA
 
@@ -14,7 +16,7 @@ La soluzione è composta da tre livelli:
 
 - **Frontend PWA**: realizzato in HTML, CSS e JavaScript vanilla. Registra un service worker che abilita la cache di `index.html`, manifest, script, fogli di stile e icone per l’uso offline.
 - **Backend su Render**: endpoint `https://attack-profiler-pwa.onrender.com/api/analyze`. Se configurato con chiave LLM valida, elabora le descrizioni tramite modello di linguaggio. In assenza di chiave può usare un motore keyword.
-- **Fallback locale**: se il backend non risponde, il frontend invoca un motore euristico locale che costruisce un report difensivo di base.
+- **Fallback locale**: se il backend non risponde, il frontend invoca un motore euristico locale che costruisce un report difensivo di base, inclusa la matrice di Triage CTI.
 
 ```text
 Descrizione evento
@@ -27,18 +29,37 @@ Frontend PWA installabile
        +--> Fallback locale euristico
        |
        v
-Dashboard, kill chain, MITRE, IOC, TTP, azioni, report
+Dashboard, Triage CTI, kill chain, MITRE, IOC, TTP, azioni, report
 ```
 
 ## Funzionalità principali
 
 - Dashboard con rischio, tecniche rilevate, IOC e profilo TTP principale.
-- Timeline visuale della kill chain su finestre 0–24h, 24–48h, 48–72h.
+- Tab **Triage CTI** visibile dopo ogni analisi.
+- Timeline visuale della kill chain.
 - Card MITRE con ID, nome, tattica, confidence score, evidenza, detection, mitigazioni e link ufficiale.
 - Preset difensivi per phishing, ransomware, esfiltrazione cloud, compromissione account cloud e OT/ICS.
 - Export JSON e TXT.
 - Storico locale delle ultime cinque analisi tramite `localStorage`.
 - Tema dark cyber con possibilità di tema chiaro.
+
+## Triage CTI
+
+Per ogni IOC estratto la UI crea una card contenente:
+
+- tipo e valore;
+- provenienza del dato: osservato dall’utente, inferenza locale, backend o fonte esterna quando disponibile;
+- timestamp dell’analisi;
+- affidabilità della fonte;
+- confidence;
+- impatto stimato;
+- stato operativo selezionabile;
+- decisione consigliata secondo matrice **impatto × fiducia**;
+- motivazione della decisione;
+- pulsante **Arricchisci IOC** solo manuale;
+- avviso privacy/operational security.
+
+Gli stati operativi disponibili sono: da contestualizzare, in monitoraggio, da validare, blocco consigliato e archiviato.
 
 ## Modalità SOC, CISO e Investigatore
 
@@ -48,30 +69,13 @@ Dashboard, kill chain, MITRE, IOC, TTP, azioni, report
 
 ## Modalità didattica e glossario
 
-Un interruttore permette di attivare la **modalità didattica**, aggiungendo icone di aiuto vicino a termini e sezioni. I pop-up spiegano in italiano:
+Un interruttore permette di attivare la **modalità didattica**, aggiungendo icone di aiuto vicino a termini e sezioni. I pop-up spiegano in italiano MITRE ATT&CK, IOC, IOA, TTP, confidence score, kill chain, detection, mitigazione, preservazione evidenze, rischio e Triage CTI.
 
-- cos’è MITRE ATT&CK e la differenza fra tattica e tecnica;
-- cosa sono IOC, IOA e TTP e perché sono importanti;
-- come interpretare il confidence score;
-- perché un profilo TTP compatibile non è attribuzione certa;
-- la sequenza della kill chain e come leggerla;
-- differenze operative tra detection, contenimento, eradicazione, ripristino e hardening;
-- importanza della preservazione delle evidenze.
-
-È incluso un glossario rapido con ricerca locale per termini come IOC, IOA, TTP, C2, phishing, ransomware, persistence, lateral movement, exfiltration, EDR, SIEM, Sigma, YARA, CVE, CVSS, CWE e CAPEC.
+È incluso un glossario rapido con ricerca locale per termini come IOC, IOA, CTI, confidence, TTP, C2, phishing, ransomware, persistence, lateral movement, exfiltration, EDR, SIEM, Sigma, YARA, CVE, CVSS, CWE e CAPEC.
 
 ## Enrichment CTI e fonti aperte
 
-L’app integra link ufficiali MITRE ATT&CK. Nelle fasi successive è prevista l’integrazione manuale e sicura di fonti aperte:
-
-- MITRE ATT&CK;
-- NVD/NIST per CVE, CVSS e CWE;
-- CISA Known Exploited Vulnerabilities;
-- FIRST EPSS;
-- CISA, CERT-EU, ENISA, CSIRT Italia/ACN;
-- CIRCL MISP e feed Abuse.ch quando compatibili con termini d’uso.
-
-L’arricchimento sarà manuale, mai automatico. Prima dell’invio di un IOC a fonti esterne, l’utente dovrà confermare di essere autorizzato. Le API key resteranno lato backend come variabili ambiente.
+L’app integra link ufficiali MITRE ATT&CK. L’arricchimento degli IOC resta manuale e non automatico. Prima dell’invio di un IOC a fonti esterne, l’utente deve essere autorizzato e valutare privacy, sensibilità del caso, minimizzazione del dato e policy interne. Le API key devono restare lato backend come variabili ambiente.
 
 ## Limiti e sicurezza
 
@@ -80,10 +84,11 @@ L’app non fornisce exploit, payload, procedure di compromissione o funzioni of
 ## Roadmap evolutiva
 
 1. **Fase 1** – PWA completa, UI moderna, service worker, dashboard, timeline, modalità didattica, glossario, storico locale e link MITRE.
-2. **Fase 2** – enrichment manuale IOC/CVE con NVD, CISA KEV, EPSS e fonti aperte.
-3. **Fase 3** – backend CTI con cache, rate limiting, scoring delle fonti e report strutturato.
-4. **Fase 4** – integrazione opzionale MISP/OpenCTI per organizzazioni autorizzate.
+2. **Fase 2** – Triage CTI locale con matrice impatto × fiducia e stato operativo IOC selezionabile.
+3. **Fase 3** – enrichment manuale IOC/CVE con fonti aperte tramite backend autorizzato.
+4. **Fase 4** – backend CTI con cache, rate limiting, scoring delle fonti e report strutturato.
+5. **Fase 5** – integrazione opzionale MISP/OpenCTI per organizzazioni autorizzate.
 
 ## Conclusione
 
-ATT&CK Profiler PWA colma il divario tra descrizione narrativa dell’incidente e analisi strutturata difensiva. È utilizzabile sia in contesti formativi sia in attività reali di triage, mantenendo sempre la distinzione tra fatti osservati, ipotesi analitiche e decisioni operative.
+ATT&CK Profiler PWA colma il divario tra descrizione narrativa dell’incidente e analisi strutturata difensiva. Con il Triage CTI, l’app distingue fatti osservati, ipotesi analitiche e decisioni operative sugli IOC, mantenendo il focus su SOC, CISO, investigatore e incident response.
